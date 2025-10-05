@@ -1,3 +1,4 @@
+using BlogApi.models.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,10 +14,12 @@ namespace BlogApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<ApplicationUser> userManager)
+        public AuthController(UserManager<ApplicationUser> userManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
 
         //POST: api/Auth/Register
@@ -56,8 +59,9 @@ namespace BlogApi.Controllers
                 if (checkPasswordResult)
                 {
                     // Generate JWT token
+                    var jwtToken = tokenRepository.CreateToken(user);
 
-                    return Ok("Successfully logged in.");
+                    return Ok(jwtToken);
                 }
             }
             return BadRequest("Invalid login attempt.");

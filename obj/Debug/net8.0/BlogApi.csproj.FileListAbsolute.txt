@@ -300,3 +300,4 @@ F:\UNIVER\Back End\Blog\Backend_Blog\obj\Debug\net8.0\refint\BlogApi.dll
 F:\UNIVER\Back End\Blog\Backend_Blog\obj\Debug\net8.0\BlogApi.pdb
 F:\UNIVER\Back End\Blog\Backend_Blog\obj\Debug\net8.0\BlogApi.genruntimeconfig.cache
 F:\UNIVER\Back End\Blog\Backend_Blog\obj\Debug\net8.0\ref\BlogApi.dll
+F:\UNIVER\Back End\Blog\Backend_Blog\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
