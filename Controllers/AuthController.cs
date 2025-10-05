@@ -26,8 +26,8 @@ namespace BlogApi.Controllers
         {
             var identityUser = new ApplicationUser
             {
-                FullName = registerDTO.FullName,
                 UserName = registerDTO.UserName,
+                //UserName = registerDTO.UserName,
                 Email = registerDTO.Email
             };
 
@@ -42,16 +42,39 @@ namespace BlogApi.Controllers
                 return BadRequest(identityResult.Errors);
             }
         }
+
+
+        // POST api/Auth/Login
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
+        {
+            var user = await userManager.FindByEmailAsync(loginDTO.Email);
+            if (user != null)
+            {
+                var checkPasswordResult = await userManager.CheckPasswordAsync(user, loginDTO.Password);
+                if (checkPasswordResult)
+                {
+                    // Generate JWT token
+
+                    return Ok("Successfully logged in.");
+                }
+            }
+            return BadRequest("Invalid login attempt.");
+        }
     }
 
     //DTO class
     public class RegisterDTO
     {
-        public string FullName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }
 
-
+    public class LoginDTO
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
 }
