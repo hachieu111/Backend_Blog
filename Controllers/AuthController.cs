@@ -1,4 +1,5 @@
 using BlogApi.models.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -14,11 +15,13 @@ namespace BlogApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<ApplicationUser> userManager, ITokenRepository tokenRepository)
+        public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ITokenRepository tokenRepository)
         {
             this.userManager = userManager;
+            this.roleManager = roleManager;
             this.tokenRepository = tokenRepository;
         }
 
@@ -66,6 +69,32 @@ namespace BlogApi.Controllers
             }
             return BadRequest("Invalid login attempt.");
         }
+
+        [Authorize(Roles = "Admin")] // chỉ Admin mới được gán role
+        [HttpPost("assign-role")]
+        public async Task<IActionResult> AssignRole([FromBody] AssignRoleDTO assignRoleDTO)
+        {
+            var Email = assignRoleDTO.Email;
+            var Role = assignRoleDTO.Role;
+
+            // Tìm user theo email
+            var user = await userManager.FindByEmailAsync(Email);
+            if (user == null) return NotFound("User not found");
+
+            if (!await roleManager.RoleExistsAsync(Role))
+            {
+                return BadRequest("Role does not exist");
+            }
+
+            var result = await userManager.AddToRoleAsync(user, Role);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok($"Đã gán role {Role} cho user {user.UserName}");
+        }
     }
 
     //DTO class
@@ -81,4 +110,11 @@ namespace BlogApi.Controllers
         public string Email { get; set; }
         public string Password { get; set; }
     }
+    
+    public class AssignRoleDTO
+    {
+        public string Email { get; set; }
+        public string Role { get; set; }
+    }
+
 }

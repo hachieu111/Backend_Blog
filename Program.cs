@@ -61,5 +61,35 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization(); //thêm
 app.MapControllers();
+
+async Task SeedRolesAsync(WebApplication app)
+{
+    using var scope = app.Services.CreateScope();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    string[] roles = { "Admin", "User" };
+
+    // Tạo role nếu chưa có
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    // Gán user admin mặc định
+    var adminEmail = "admin3@gmail.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+    if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, "Admin"))
+    {
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
+}
+
+// gọi seed trước khi run
+await SeedRolesAsync(app);
 app.Run();
 //test
