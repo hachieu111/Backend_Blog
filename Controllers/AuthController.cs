@@ -34,20 +34,20 @@ namespace BlogApi.Controllers
                 Email = registerDTO.Email
             };
 
-            var identityResult = await userManager.CreateAsync(identityUser, registerDTO.Password);
+            var identityResult = await userManager.CreateAsync(identityUser, registerDTO.Password); //create user -> add to DB, pass to hashpass
 
-            if (identityResult.Succeeded)
+            if (identityResult.Succeeded) // create succeed
             {
-                if (registerDTO.Roles != null && registerDTO.Roles.Any())
+                if (registerDTO.Roles != null && registerDTO.Roles.Any()) // role not null && role in DTO any of them
                 {
-                    await userManager.AddToRolesAsync(identityUser, registerDTO.Roles);
+                    await userManager.AddToRolesAsync(identityUser, registerDTO.Roles); // add role
                     if (identityResult.Succeeded)
                     {
-                        return Ok("User registered successfully.");
+                        return Ok("User registered successfully."); //200 200
                     }
                 }
             }
-            return BadRequest(identityResult.Errors);
+            return BadRequest(identityResult.Errors); 
         }
 
 
