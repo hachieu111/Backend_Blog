@@ -1,7 +1,8 @@
 // Models/PostTag.cs
-
-public class PostTag
+namespace BlogApp.Models
 {
+    public class PostTag
+    {
     public int PostId { get; set; }   // FK -> Posts.Id
     public Post Post { get; set; }
 
@@ -10,4 +11,6 @@ public class PostTag
 
     // Nếu cần thêm dữ liệu trên quan hệ: 
     // public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+    }
 }
+

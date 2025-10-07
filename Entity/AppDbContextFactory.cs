@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
+namespace BlogApp.Entity
+{
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args)
@@ -10,4 +12,5 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 
         return new AppDbContext(optionsBuilder.Options);
     }
+}
 }

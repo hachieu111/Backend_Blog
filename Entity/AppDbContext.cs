@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using BlogApp.Models;
 
-
-public class AppDbContext : IdentityDbContext<ApplicationUser>
+namespace BlogApp.Entity
+{ 
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -47,3 +49,5 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
             .IsUnique();
     }
 }
+
+}  
