@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace BlogApi.models.Repository
+namespace BlogApp.Repository
 {
     public interface ITokenRepository
     {

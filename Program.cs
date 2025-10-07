@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using BlogApi.models.Repository;
+using BlogApp.Repository;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
