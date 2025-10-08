@@ -46,6 +46,12 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+//bỏ qua vòng lặp vô hạn
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+});
 
 // Đọc connection string
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
