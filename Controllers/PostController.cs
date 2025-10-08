@@ -1,9 +1,3 @@
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.EntityFrameworkCore;
-// using System.Collections.Generic;
-// using System.Threading.Tasks;
-// using Microsoft.AspNetCore.Authorization;
-// using BlogApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
