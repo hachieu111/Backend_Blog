@@ -14,6 +14,7 @@ using System.Security.Claims;
 using BlogApp.Entity;
 using BlogApp.Models;
 using BlogApi.Migrations;
+using Microsoft.AspNetCore.Identity;
 
 namespace BlogApp.Controllers
 {
@@ -27,6 +28,7 @@ namespace BlogApp.Controllers
             _context = context;
         }
 
+        // Public
         // GET: /api/posts
         [HttpGet]
         public async Task<IActionResult> GetAllPosts()
@@ -45,6 +47,7 @@ namespace BlogApp.Controllers
             return Ok(posts);
         }
 
+        // Public
         // GET: /api/posts/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPostById(int id)
@@ -69,9 +72,10 @@ namespace BlogApp.Controllers
             return Ok(post);
         }
 
+        // Authorize -> User was login
         // POST: /api/posts
-        [HttpPost]
         [Authorize]
+        [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] CreatePostDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -108,12 +112,15 @@ namespace BlogApp.Controllers
             return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, new { post.Id, post.Title });
         }
 
+        // Authorize -> Author or Admin
         // PUT: /api/posts/{id}
-        [HttpPut("{id}")]
         [Authorize]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePost(int id, [FromBody] UpdatePostDto dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
             if (userId == null)
                 return Unauthorized();
 
@@ -125,7 +132,7 @@ namespace BlogApp.Controllers
             if (post == null)
                 return NotFound();
 
-            if (post.AuthorId != userId)
+            if (post.AuthorId != userId && userRole != "Admin") // only author or admin can update
                 return Forbid();
 
             // Cập nhật nội dung
@@ -151,12 +158,15 @@ namespace BlogApp.Controllers
             return NoContent();
         }
 
+        // Authorize -> Author or Admin
         // DELETE: /api/posts/{id}
-        [HttpDelete("{id}")]
         [Authorize]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePost(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
             if (userId == null)
                 return Unauthorized();
 
@@ -164,7 +174,7 @@ namespace BlogApp.Controllers
             if (post == null)
                 return NotFound();
 
-            if (post.AuthorId != userId)
+            if (post.AuthorId != userId && userRole != "Admin") // only author or admin can delete
                 return Forbid();
 
             _context.Posts.Remove(post);

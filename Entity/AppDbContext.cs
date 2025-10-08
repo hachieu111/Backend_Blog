@@ -47,29 +47,6 @@ namespace BlogApp.Entity
         builder.Entity<Tag>()
             .HasIndex(t => t.Name)
             .IsUnique();
-
-    //     // Seed roles
-    //     var adminRoleId = "b1a0d1e4-8c3f-4f3d-9a77-111111111111";
-    //     var userRoleId = "c2b1e2f5-9d4e-5f4d-8b88-222222222222";
-    //     var roles = new List<IdentityRole>
-    //     {
-    //         new IdentityRole
-    //         {
-    //             Id = adminRoleId,
-    //             ConcurrencyStamp = adminRoleId,
-    //             Name = "Admin",
-    //             NormalizedName = "ADMIN"
-    //         },
-    //         new IdentityRole
-    //         {
-    //             Id = userRoleId,
-    //             ConcurrencyStamp = userRoleId,
-    //             Name = "User",
-    //             NormalizedName = "USER"
-    //         }
-    //     };
-
-    //     builder.Entity<IdentityRole>().HasData(roles);
     }
 }
 

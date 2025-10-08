@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using BlogApi.models.Repository;
+using BlogApp.Repository;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -54,8 +54,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Thêm Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+// Identity Setup 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => //Identity with User and Role
 {
     options.Password.RequireDigit = false;
     options.Password.RequireLowercase = false;
@@ -64,29 +64,29 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     options.Password.RequiredLength = 6;
     options.Password.RequiredUniqueChars = 1;
 })
-.AddEntityFrameworkStores<AppDbContext>()
-.AddDefaultTokenProviders();
+.AddEntityFrameworkStores<AppDbContext>() // Save user/role to DB through this DbContext (AppDbContext)
+.AddDefaultTokenProviders(); // sercurity token
 
 
 // Cấu hình JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // way to authentication a user -> use jwt bearer authentication
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // way to respone to user when not authentication -> 401, 403,...
 })
-.AddJwtBearer(options =>
+.AddJwtBearer(options => //details
 {
-    options.TokenValidationParameters = new TokenValidationParameters
-{
-    ValidateIssuer = true,
-    ValidateAudience = true,
-    ValidateLifetime = true,
-    ValidateIssuerSigningKey = true,
-    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-    ValidAudience = builder.Configuration["Jwt:Audience"],
-    IssuerSigningKey = new SymmetricSecurityKey(
-        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-};
+    options.TokenValidationParameters = new TokenValidationParameters // a validate token
+    {
+        ValidateIssuer = true, // who...
+        ValidateAudience = true, // who use???
+        ValidateLifetime = true, // expire
+        ValidateIssuerSigningKey = true, // check issuer sign -> is right? or fake
+        ValidIssuer = builder.Configuration["Jwt:Issuer"], // validIssuer = validIssuer from appsetting.json
+        ValidAudience = builder.Configuration["Jwt:Audience"], // same like above
+        IssuerSigningKey = new SymmetricSecurityKey( // secret key
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
 });
 
 builder.Services.AddAuthorization();
@@ -101,10 +101,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization(); //thêm
+app.UseAuthentication(); 
+app.UseAuthorization(); 
 app.MapControllers();
 
+// Seed Roles (Admin, User)
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -112,8 +113,8 @@ using (var scope = app.Services.CreateScope())
     string[] roles = { "Admin", "User" };
     foreach (var role in roles)
     {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
+        if (!await roleManager.RoleExistsAsync(role)) // if role not exist? 
+            await roleManager.CreateAsync(new IdentityRole(role)); //create new role 
     }
 }
 
