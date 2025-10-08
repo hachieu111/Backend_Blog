@@ -109,7 +109,13 @@ namespace BlogApp.Controllers
             _context.Posts.Add(post);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, new { post.Id, post.Title });
+            return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, new
+            {
+                post.Id,
+                post.Title,
+                post.Content,
+                TagNames = post.PostTags.Select(pt => pt.Tag.Name).ToList()
+            });
         }
 
         // Authorize -> Author or Admin
